@@ -16,16 +16,13 @@ $isEmpty = empty($cart);
 function getProductById($products, $productId) {
     //print_r($productId . "   -   ");
      if ($products !== null && !empty($products)) {
-        // Cerca il prodotto nell'array dei prodotti utilizzando l'ID
         foreach ($products as $product) {
             if ($product['id'] == $productId) {
-                // Restituisci il prodotto se viene trovato
                 return $product;
             }
         }
     }
     //print_r('ciao');
-    // Se il prodotto non viene trovato o l'array dei prodotti è vuoto, restituisci null
     return null;
 }
 
@@ -63,8 +60,10 @@ function displayCartItem($cartItem, $index, $products, $addToCart, $removeFromCa
                 </div>
             </div>
             <div class="quantity-wrapper">
-                <input class="quantity-input" type="number" value="' . $cartItem['quantity'] . '" onchange="handleQuantityChange(this.value, ' . $cartItem['id'] . ', ' . $cartItem['quantity'] . ', ' . $addToCart . ', ' . $removeFromCart . ')">
-                <button class="remove-button" onclick="' . $removeFromCart . '(' . $cartItem['id'] . ')">Remove</button>
+                <form method="post" action="index.php">
+                    <input type="hidden" name="cart_item_id" value="<?php echo $product["id"]; ?>">
+                    <button class="remove-button" type="submit">Remove</i></button>
+                </form> 
             </div>
         </div>';
 }
