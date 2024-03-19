@@ -1,14 +1,33 @@
 <?php
+session_start();
+//session_unset('products');à
+
+// if(isset($_SESSION['cart']) && !empty($_SESSION['cart'])) {
+//     echo "<pre>";
+//     print_r($_SESSION['cart']);
+//     echo "</pre>";
+//     // var_dump($_SESSION);
+// } else {
+//     echo "La sessione è vuota o non è stata inizializzata.";
+// }
 
 class AppContext {
     private $cart = [];
-    private $paid = false;
     private $products = null;
     private $loading = false;
     private $error = "";
 
     public function __construct() {
-        $this->fetchProducts();    
+        if (!isset($_SESSION['products'])) {
+            $this->fetchProducts(); 
+            $_SESSION['products'] = $this->getProducts();
+        } else {
+            $this->products = $_SESSION['products']; 
+        }  
+        
+        if (isset($_SESSION['cart'])) {
+            $this->cart = $_SESSION['cart'];
+        }
     }
 
     public function getCart() {
@@ -29,10 +48,10 @@ class AppContext {
                 return ['id' => $el['id'], 'quantity' => $el['quantity'] + 1];
             }, $this->cart);
             $this->cart = $newCart;
-            //$this->getProductQuantity($idProduct, true);
+            $_SESSION['cart'] = $this->cart;
         } else {
             $this->cart[] = ['id' => $idProduct, 'quantity' => 1];
-            //$this->getProductQuantity($idProduct, true);
+            $_SESSION['cart'] = $this->cart;
         }
     }
 
@@ -50,17 +69,8 @@ class AppContext {
             }
         }, []);
         $this->cart = $newCart;
-        //$this->getProductQuantity($idProduct, false);
     }
 
-    public function pay() {
-        $this->paid = true;
-        $this->cart = [];
-    }
-
-    public function done() {
-        $this->paid = false;
-    }
 
     public function fetchProducts() {
         $this->loading = true;
@@ -79,21 +89,20 @@ class AppContext {
         return $this->products;
     }
 
-    private function getProductQuantity($idProduct) {
-        $productHome = null;
+    public function getProductQuantity($idProduct) {
         $qntApi = 0;
         $qntCart = 0;
 
-        foreach ($this->cart as $product) {
-            if ($product['id'] == $idProduct) {
-                $qntCart = $product['quantity'];
+        foreach ($this->cart as $cartProduct) {
+            if ($cartProduct['id'] == $idProduct) {
+                $qntCart = $cartProduct['quantity'];
                 break;
             }
         }
-
+    
         foreach ($this->products as $product) {
             if ($product['id'] == $idProduct) {
-                $qntApi = $product['quantity'];
+                $qntApi = $product['qty'];
                 break;
             }
         }
@@ -101,3 +110,7 @@ class AppContext {
         return $qntApi - $qntCart;
     }
 }
+
+
+?>
+

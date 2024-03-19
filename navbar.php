@@ -41,7 +41,7 @@ echo '
   </div>
   <div class="nav-item">
     <h3><a href="/ecommerce/" style="color: white; text-decoration: none;"><i class="fas fa-home"></i> Home</a></h3>
-    <h3><a href="/ecommerce/cart" style="color: white; text-decoration: none;"><i class="fas fa-cart-shopping"></i> Cart</a></h3>
+    <h3><a href="/ecommerce/cart.php" style="color: white; text-decoration: none;"><i class="fas fa-cart-shopping"></i> Cart</a></h3>
   </div>
 </div>';
 ?>
