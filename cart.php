@@ -3,8 +3,6 @@
 
 require_once 'AppContext.php';
 
-//use AppContext;
-
 $appContext = new AppContext();
 
 $products = $appContext->getProducts();
@@ -16,21 +14,14 @@ $isEmpty = empty($cart);
 if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['cart_item_id'])) {
     // var_dump($_SESSION);
     $idProductToRemove = $_GET['cart_item_id'];
-    echo "<pre>";
-    print_r($idProductToRemove);
-    echo "</pre>";
     $appContext->removeFromCart($idProductToRemove);
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
-    //echo "Prodotto aggiunto al carrello con ID: " . $idProductToAdd;
-
-}elseif($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id'])){
+} elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id'])){
     $idProductToAdd = $_GET['product_id'];
     $appContext->addToCart($idProductToAdd);
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
-} else {
-    echo "La sessione è vuota o non è stata inizializzata.";
 }
 
 function getProductById($products, $productId) {
@@ -58,7 +49,7 @@ function calculateTotal($cart, $products) {
 
 function displayCartItem($cartItem, $index, $products, $addToCart, $removeFromCart) {
     $product = getProductById($products, $cartItem['id']);
-    print_r($cartItem["quantity"]);
+    //print_r($cartItem["quantity"]);
     if (!$product) return null;
     $product = $product;
     return '
@@ -91,6 +82,7 @@ function displayCartItem($cartItem, $index, $products, $addToCart, $removeFromCa
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cart</title>
     <link rel="stylesheet" href="cart.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 <body>
     <div id="cart-page-wrapper">
