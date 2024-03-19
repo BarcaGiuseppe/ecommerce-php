@@ -13,6 +13,26 @@ $cart = $appContext->getCart();
 $totalItems = count($products);
 $isEmpty = empty($cart);
 
+if ($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET['cart_item_id'])) {
+    // var_dump($_SESSION);
+    $idProductToRemove = $_GET['cart_item_id'];
+    echo "<pre>";
+    print_r($idProductToRemove);
+    echo "</pre>";
+    $appContext->removeFromCart($idProductToRemove);
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+    //echo "Prodotto aggiunto al carrello con ID: " . $idProductToAdd;
+
+}elseif($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id'])){
+    $idProductToAdd = $_GET['product_id'];
+    $appContext->addToCart($idProductToAdd);
+    header("Location: " . $_SERVER['PHP_SELF']);
+    exit;
+} else {
+    echo "La sessione è vuota o non è stata inizializzata.";
+}
+
 function getProductById($products, $productId) {
     //print_r($productId . "   -   ");
      if ($products !== null && !empty($products)) {
@@ -36,18 +56,9 @@ function calculateTotal($cart, $products) {
     }, 0);
 }
 
-function handleQuantityChange($event, $id, $qnt, $addToCart, $removeFromCart) {
-    $newQuantity = (int)$event;
-    if ($newQuantity > $qnt) {
-        $addToCart($id);
-    } else {
-        $removeFromCart($id);
-    }
-}
-
 function displayCartItem($cartItem, $index, $products, $addToCart, $removeFromCart) {
     $product = getProductById($products, $cartItem['id']);
-    //print_r($product);
+    print_r($cartItem["quantity"]);
     if (!$product) return null;
     $product = $product;
     return '
@@ -60,8 +71,9 @@ function displayCartItem($cartItem, $index, $products, $addToCart, $removeFromCa
                 </div>
             </div>
             <div class="quantity-wrapper">
-                <form method="post" action="index.php">
-                    <input type="hidden" name="cart_item_id" value="<?php echo $product["id"]; ?>">
+                <form method="get" action="cart.php">
+                <input class="quantity-input" type="number" value="' . $cartItem['quantity'] . '" onchange="handleQuantityChange(this.value, ' . $cartItem['id'] . ', ' . $cartItem['quantity'] . ')">
+                    <input type="hidden" name="cart_item_id" value="'. $product["id"] . '">
                     <button class="remove-button" type="submit">Remove</i></button>
                 </form> 
             </div>
@@ -101,12 +113,30 @@ function displayCartItem($cartItem, $index, $products, $addToCart, $removeFromCa
         </div>
     </div>
     <script>
-        function handleQuantityChange(value, id, qnt, addToCart, removeFromCart) {
+        function handleQuantityChange(value, id, qnt) {
             var newQuantity = parseInt(value);
-            if (newQuantity > qnt) {
-                addToCart(id);
-            } else {
-                removeFromCart(id);
+            console.log(newQuantity);
+           if (newQuantity > qnt) {
+                fetch('cart.php', {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        product_id: id
+                    }),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+            }
+            if(newQuantity < qnt){
+                fetch('cart.php', {
+                    method: 'GET',
+                    body: new URLSearchParams({
+                        cart_item_id: id
+                    }),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
             }
         }
     </script>

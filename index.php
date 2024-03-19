@@ -25,12 +25,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['product_id'])) {
     header("Location: " . $_SERVER['PHP_SELF']);
     exit;
     //echo "Prodotto aggiunto al carrello con ID: " . $idProductToAdd;
-}elseif ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['cart_item_id'])) {
-    $idProductToRemove = $_POST['cart_item_id'];
-
-    $appContext->removeFromCart($idProductToRemove);
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
 }
 ?>
 

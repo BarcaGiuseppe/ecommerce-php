@@ -69,6 +69,7 @@ class AppContext {
             }
         }, []);
         $this->cart = $newCart;
+        $_SESSION['cart'] = $this->cart;
     }
 
 
